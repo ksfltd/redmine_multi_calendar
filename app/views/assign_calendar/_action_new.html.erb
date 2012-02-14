@@ -1,0 +1,69 @@
+ <% users_assign_calendar = AssignCalendar.all_users_for_calendar(@calendar.id) %>
+  
+<div class="splitcontentleft">
+<% if users_assign_calendar.any? %>
+    <table class="list users">
+	<thead>
+          <tr>
+            <th><%= l(:label_user) %> </th>
+            <th style="width:15%"></th>
+          </tr>
+        </thead>
+	<tbody>
+          
+	<% users_assign_calendar.each do |u| %>	
+	<tr id="user-<%= u.id %>" class="<%= cycle 'odd', 'even' %>">
+            <td><%= u %></td>
+            <td class="buttons">
+
+                <%= link_to_remote(l(:button_delete), { :url => {:controller => 'assign_calendar', :action => 'destroy', :user_id => u.id, :calendar_id => @calendar.id},
+                                                        :method => :post,
+                                                        :confirm =>  "Are you sure you want to delete it?"
+                                                      }, :title => l(:button_delete),
+                                                         :class => 'icon icon-del') %>
+            </td>
+	</tr>
+      <% end%>
+
+	</tbody>
+</table>
+<% else %>
+    <p class="nodata"><%=  l(:mc_no_data_to_display)%></p>
+
+<% end %>
+</div>
+<% users = User.active.find(:all, :limit => 100, :order => 'type, login, lastname ASC') - AssignCalendar.all_users %>
+
+
+<div class="splitcontentright">
+  <% if !users.empty? %>
+        <fieldset><legend><%=l(:label_member_new)%></legend>
+        
+
+        <% remote_form_for(:a_calendar, @a_calendar, :url => {:controller => 'assign_calendar', :action => 'create', :id => @calendar.id}, :method => :post) do |f| %>
+              <p>
+                <%= label_tag "user_search", l(:mc_search_for_user) %>
+                <%= text_field_tag 'user_search', nil %>
+              </p>
+              <%= observe_field(:user_search,
+                               :frequency => 0.5,
+                               :update => :assign_calendar,
+                               :url => { :controller => 'assign_calendar', :action => 'autocomplete_for_assign_calendar', :id => @calendar.id },
+                               :with => 'q')
+                                %>
+              
+             
+              <div id="assign_calendar">
+                
+                <p><%= users_check_box_tags 'users_for_calendar[user_ids][]', users %> </p>
+                
+              </div>
+              <% if users.size > 1 %>
+                <p><input id="all_select" type="checkbox" onchange="select_all();"/> Select all</p>
+              <% end %>
+              <p><%= submit_tag l(:button_add) %></p>
+      <% end %>
+       </fieldset>
+
+  <% end %>
+</div>

@@ -1,0 +1,16 @@
+<%= f.hidden_field :calendar_id %>
+<div class="form_windows_m">
+  <div class="form_content_m">
+          <div class="text_m"><%= f.label :name, "#{l(:mc_name2)} " %><span style="padding-right: 7px;" class="required"> *</span></div>
+          <div class="form_elements_m"><%= f.text_field :name, :required => "required"  %></div>
+  </div>
+  <div class="form_content_m">
+          <div class="text_m"><%= f.label :color, "#{l(:mc_color)} " %><span style="padding-right: 7px; " class="required"> *</span></div>
+          <div class="form_elements_m"><%= f.text_field :color, :class => "iColorPicker", :id => "#{id_day}", :required => "required"   %></div>
+  </div>
+
+  <div class="form_content_m">
+           <div class="text_m"><%= f.label :duration, "#{l(:mc_duration)} "%><span style="padding-right: 7px; " class="required"> *</span></div>
+           <div class="form_elements_m"><%= f.text_field :duration, :required => "required"  %></div>
+  </div>
+</div>

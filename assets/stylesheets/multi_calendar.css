@@ -1,0 +1,106 @@
+
+.list_calendar a{
+  color: #2A5685;
+  text-decoration: none;
+  font-family:"Trebuchet MS",Verdana,sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+}
+.list_calendar a img{
+  height: 8px;
+  width: 8px;
+}
+
+.duplicate_img{
+  height: 10px !important;
+  width: 10px !important;
+}
+
+.vacations{
+  background: none repeat scroll 0 0 #FFE4E1;
+}
+
+div.vacations{
+    background: none repeat scroll 0 0 #FFDAB9;
+    border: 1px solid #D7D7D7;
+    margin-bottom: 6px;
+    padding: 6px;
+}
+
+.m_label{
+    font-weight: bold;
+    text-align: center;
+}
+
+.m_form label {
+    font-weight: bold;
+}
+
+.icon-duplicate { background-image: url(../../../images/copy.png); }
+.icon-delete { background-image: url(../../../images/delete.png); }
+
+div#tab-content-day_type .splitcontentleft { width: 64% }
+div#tab-content-day_type .splitcontentright { width: 34% }
+
+
+.list_week_days {
+    width: 20% !important;
+    margin-left: 135px;
+}
+
+.icon-delete3{
+    margin-left: 5px;
+    background-image: url(../images/delete3.png);
+}
+
+.icon-delete2{
+    margin-left: 5px;
+    background-image: url(../images/delete2.png);
+    width:10px;
+}
+
+.icon-back{
+    margin-left: 5px;
+    background-image: url(../images/back.png);
+}
+
+.form_windows_m{
+ /* float:left;*/
+  margin:0;
+  padding:22px 0 0 0;
+  width:370px;
+}
+
+.form_content_m{
+
+ /* float:left;*/
+ text-align: left;
+  margin-bottom:12px;
+  width:350px;
+}
+
+.text_m{
+  /*font-weight:bold;*/
+  float:left;
+  line-height:1.6;
+  padding-right:7px;
+  text-align:right;
+  width:90px;
+}
+
+.form_elements_m{
+  
+}
+
+.submit_button_m{
+  padding: 13px  0 22px 30px;
+  width:383px;}
+
+.submit_button2_m{
+  width:383px;}
+
+.submit_button_m input, .submit_button2_m input{ width:65px;}
+
+.error_date{
+    border:2px solid red;
+}

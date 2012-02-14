@@ -1,0 +1,10 @@
+<script>
+  jQuery(document).ready(function(){
+      jQuery("#header>h1").text('<%= calendar.name %>');    
+      jQuery("<div id='main-menu'><ul><li>" + ' <%= link_to 'Overview', {:controller => 'calendar', :action => "show", :id =>calendar.id}, :class => "edit_calendar #{menu_selected("show", params["action"])}" %>' + "</li><li>"  + ' <%= link_to 'Settings', {:controller => 'calendar', :action => "settings", :id =>calendar.id}, :class => "settings_calendar #{menu_selected("settings", params["action"])}" %>' + "</li></ul></div>").appendTo("#header");
+     
+});
+
+
+</script>
+

@@ -1,0 +1,21 @@
+
+<table class="list list_week_days">
+	<thead>
+          <tr>
+            <th>Day </th>
+            <th>Type</th>
+          </tr>
+        </thead>
+	<tbody>
+
+          <% @calendar.week_days.sort_by(&:dayname).each do |day| %>
+              <tr id="user-<%= day.id %>" class="<%= cycle 'odd', 'even' %>">
+                  <td><%=l("dayname_#{day.dayname}")%></td>
+                  <td style="text-align: center;"><%=  select_day_types_tag(@calendar, day) %></td>
+               </tr>
+           <% end%>
+
+	</tbody>
+</table>
+
+  

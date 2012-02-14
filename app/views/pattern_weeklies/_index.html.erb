@@ -1,0 +1,101 @@
+<script>
+    function validate_form_day_type(form_day_type) {
+            var day_type_name = jQuery("#"+form_day_type).find("#day_type_name").attr("value");
+            var day_type_duration = jQuery("#"+form_day_type).find("#day_type_duration").attr("value");
+            var day_type_color = jQuery("#"+form_day_type).find(".iColorPicker").attr("value");
+           
+
+          if (day_type_duration==""){
+             alert("Duration is invalid");
+             return false;
+           }
+          
+           var re = /[%\'\"]/;
+           var result = re.test(day_type_name);
+           if (result || day_type_name==""){
+             alert("Name is invalid");
+             return false;
+           }
+           re = /^(#[0-9A-F]{6}|#[0-9A-F]{3}|black|white|blue|red|yellow|green|purple|gray|silver|navy|fuchsia|lime|maroon|olive|teal)$/i;
+           result = re.test(day_type_color);
+           if (!result){
+             alert("Color is invalid");
+             return false;
+           }
+           return true;
+      }
+
+</script>
+
+
+<div class="splitcontentleft">
+              <table class="list issues">
+
+                  <thead>
+                    <tr>
+                      <th class="checkbox hide-when-print">Name</th>
+                      <th><%= l(:mc_color)%></th>
+                      <th><%= l(:mc_duration)%></th>
+                      <th></th>
+                      </tr>
+                  </thead>
+                      <tbody>
+                   <% @calendar.pattern_weeklies.sort_by(&:id).each do |day| %>
+
+                      <tr id="issue-21" class="hascontextmenu odd issue status-1 priority-2">
+                        <td class="subject"><span id="member-<%= day.id %>-edit-name"><%= day.name %></span></td>
+                        <td class="tracker"><span id="member-<%= day.id %>-edit-color">
+                            <div style="background: <%= day.color %>; color: <%= day.color %>; width: 100px; margin-left: 35%;">1</div>
+                          </span></td>
+                        <td class="tracker" style="width:380px;"><span id="member-<%= day.id %>-edit-duration"><%= day.duration %>hours</span>
+
+
+                          
+
+
+                          <% form_for( :day_type, day, :url => {:controller => 'pattern_weeklies', :action => 'edit', :id => day}, :method => :post,
+      									:html => { :id => "member-#{day.id}-edit-form", :style => 'display:none;', :onsubmit => "return validate_form_day_type('member-#{day.id}-edit-form');"}) do |f| %>
+
+                              <%= render :partial => 'pattern_weeklies/form', :locals => { :f => f, :id_day => "day_color#{day.id}"} %>
+                              <div class="submit_button2_m"><%= submit_tag l(:button_change) %>
+                              <%= link_to_function l(:button_cancel), "$('member-#{day.id}-edit-name').show(); $('member-#{day.id}-edit-color').show(); $('member-#{day.id}-edit-duration').show(); $('member-#{day.id}-edit-form').hide(); return false;" %>
+                              </div>
+                          <% end %>
+
+
+
+
+                              
+                        </td>
+                        <td class="buttons">
+
+                          <%= link_to_function l(:button_edit), "$('member-#{day.id}-edit-name').hide(); $('member-#{day.id}-edit-color').hide(); $('member-#{day.id}-edit-duration').hide(); $('member-#{day.id}-edit-form').show(); return false;", :class => 'icon icon-edit' %>
+                          <% if !day.deft && day.week_days.empty? && day.calendar_vacations.empty? %>
+                            
+                              <%= link_to l(:mc_delete2), { :controller => "pattern_weeklies",  :id => day.id, :calendar_id => @calendar.id,  :action => "destroy"}, :method => :delete,  :confirm => "Are you sure you want to delete it?", :title => l(:button_delete), :class => 'icon icon-delete' %>
+                            
+                          <% end %>
+                        </td>
+                      </tr>
+                      <% end %>
+                      </tbody>
+              </table>
+       </div>
+
+
+<div class="splitcontentright">
+
+        <fieldset><legend class="m_label"><%= l(:mc_new_day_type)%></legend>
+
+         
+        <% form_for( :day_type, @day_type, :url => {:controller => 'pattern_weeklies', :action => 'create'}, :html => { :method => :post, :onsubmit => "return validate_form_day_type('new_day_type');", :id => "new_day_type" }) do |f| %>
+          
+          <%= render :partial => 'pattern_weeklies/form', :locals => { :f => f, :id_day => "day_color_new"} %>
+              
+              <div class="submit_button_m"><%= submit_tag l(:button_add) %></div>
+      <% end %>
+       </fieldset>
+
+
+</div>
+

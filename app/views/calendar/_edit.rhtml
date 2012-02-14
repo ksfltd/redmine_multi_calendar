@@ -1,0 +1,23 @@
+<%= render :partial => 'calendar/error_multi_calendar' %>
+<% form_for @calendar, :url => { :action => "update", :id => @calendar.id }, :html => { :class => "m_form tabular"} do |f| %>
+<%= error_messages_for 'calendar' %>
+      <div class="box">
+        <p>          
+          <label for="calendar_name">Name<span class="required"> *</span></label>
+          <%= f.text_field :name, :required => "required", :maxlength => 30 %>
+        </p>
+        
+        <p>
+
+          <%= f.label :template, 'Template ' %>
+          <select id='select_' name='calendar_v[fixed_date]'> <option value='1' selected >Weekly</option> </select>
+         
+        </p>
+        
+          <%= render :partial => 'week_days/edit' %>
+       
+      </div>
+
+    <%= submit_tag "Save" %>
+  <% end %>
+ 

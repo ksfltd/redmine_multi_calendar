@@ -1,0 +1,116 @@
+<%= render :partial => 'menu/menu_show_calendar', :locals => { :calendar => @calendar} %>
+<h2><%=l(:mc_list_holidays)%></h2>
+<br/><br/>
+<script>
+  jQuery(document).ready(function(){
+
+    jQuery("#date_year_for_list_holidays").change(function () {
+
+      jQuery("#list_holidays_calendar").submit();
+          });
+
+   });
+
+   function event_destroy_l(date) {
+     jQuery("#d_event_"+date).attr("disabled","disabled");
+     jQuery("#input_"+date).attr("disabled","disabled");
+    // jQuery("#checkbox_"+date).attr("disabled","disabled");
+     jQuery("#select_"+date).attr("disabled","disabled");
+     jQuery("#select_brief_days_"+date).attr("disabled","disabled");
+
+     jQuery("#span_"+date).wrapAll("<s></s>");
+   
+     jQuery("#a_"+date).remove();
+     jQuery("#div_"+date).append("<a  id='a_" + date + "' onclick='return event_undo(\"" + date + "\");'  href='#'><div style='margin-top: 5px; height:16px; width: 16px; float:right;'><img border='0'  src='/images/../plugin_assets/redmine_multi_calendar/images/undo.png' alt='undo'/></div></a>");
+
+     var name = "del_" + jQuery("#hidden_"+date).attr("name");
+     jQuery("#hidden_"+date).attr("name", name);
+
+     return false;
+    }
+
+   function event_undo(date) {
+     jQuery("#d_event_"+date).removeAttr("disabled");
+     jQuery("#input_"+date).removeAttr("disabled");
+     jQuery("#select_"+date).removeAttr("disabled");
+     jQuery("#select_brief_days_"+date).removeAttr("disabled");
+     jQuery("#span_"+date).unwrap();
+     jQuery("#a_"+date).remove();
+     jQuery("#div_"+date).append("<a  id='a_" + date + "' onclick='return event_destroy_l(\"" + date + "\");'  href='#'><div style='margin-top: 5px; height:16px; width: 16px; float:right;'><img border='0' src='/images/../plugin_assets/redmine_multi_calendar/images/delete_calendar.png' alt='delete'/></div></a>");
+
+     var name = jQuery("#hidden_"+date).attr("name");
+     var reg=/del_/
+     var result = name.replace(reg, "")
+
+     jQuery("#hidden_"+date).attr("name", result);
+
+     return false;
+    }
+
+ </script>
+
+<br/><br/><br/>
+<% form_tag (  {:controller => "calendar_vacation", :action => "list_holidays"}, :id => "list_holidays_calendar") do %>
+  <span class="m_label">Year: </span><%= select_year(@year, {:start_year => Date.today.year-5, :end_year => Date.today.year+5}, {:id => "date_year_for_list_holidays"}) %>
+<% end %>
+
+
+
+   <% form_tag (  {:action => "duplicate", :id => @calendar.id, :year => "#{@year}" }) do %>
+         <%= submit_tag "copy to " %>
+        <span class="m_label">Year:</span> <%= select_year(@copy_to_year, {:start_year => Date.today.year-5, :end_year => Date.today.year+5}, {:id => "date_year_for_copy_to"}) %>
+  <% end %>
+
+
+<br/><br/>
+<% if !@holidays.empty? %>
+      <% i_holiday = 0 %>
+      <% form_tag (  {:controller => "calendar_vacation", :action => "update", :id => @calendar.id}) do %>
+        <div class="apply" style='width: 670px;  clear:both;'>
+          <div style="width:90px; float: left;" align="center" class="m_label">Date </div>
+          <div style="width:330px; float: left;" align="center" class="m_label">Holiday</div>
+          <div style="width:90px; float: left;" align="center" class="m_label">Fixed date</div>
+          <div style="width:100px; float: left;" align="center" class="m_label">Day</div>
+        </div>
+        <div id="all_event">
+          <% @holidays.each do |calendar| %>
+            <% i_holiday = i_holiday + 1 %>
+          <div id='div_<%= calendar.date_holiday %>'  style='width: 670px;'>
+            <span id ="span_<%= calendar.date_holiday %>">
+                <input id='d_event_<%= calendar.date_holiday %>' name='calendar_v<%= i_holiday %>[date_holiday]' type='text' value='<%= calendar.date_holiday %>' size='10' />
+                <input id='input_<%= calendar.date_holiday %>' name='calendar_v<%= i_holiday %>[holiday]' type='text' value='<%= calendar.holiday %>' size='50' />
+
+                <% if calendar.fixed_date == 0 %>
+                    <select id='select_<%= calendar.date_holiday %>' name='calendar_v<%= i_holiday %>[fixed_date]'> <option value='1'>Fixed date</option><option value='0' selected >Free date</option> </select>
+                <% else %>
+                    <select id='select_<%= calendar.date_holiday %>' name='calendar_v<%= i_holiday %>[fixed_date]'> <option value='1' selected >Fixed date</option><option value='0'>Free date</option> </select>
+                <% end %>
+
+                <% if calendar.brief_days == 0 %>
+                    <select id='select_brief_days_<%= calendar.date_holiday %>' name='calendar_v<%= i_holiday %>[brief_days]'> <option value='1'>Before holidays</option><option value='0' selected >Holiday</option> </select>
+                <% else %>
+                    <select id='select_brief_days_<%= calendar.date_holiday %>' name='calendar_v<%= i_holiday %>[brief_days]'> <option value='1' selected >Before holidays</option><option value='0'>Holiday</option> </select>
+                <% end %>
+            </span>
+
+            <input type='hidden' id='hidden_<%= calendar.date_holiday %>' name='calendar_v_<%= i_holiday %>' value='<%= calendar.date_holiday %>' />
+            <a id='a_<%= calendar.date_holiday %>' onclick="return event_destroy_l('<%= calendar.date_holiday %>')" href='#'>
+              <div style='margin-top: 5px; height:16px; width: 16px; float:right;'>
+                <img border='0' src='/images/../plugin_assets/redmine_multi_calendar/images/delete_calendar.png' alt='delete'/>
+              </div>
+            </a>
+             </div>
+            <% end %>
+
+        </div>
+        <input type="hidden" name="i_holiday" id="i_holiday" value="<%= i_holiday %>" />
+        <p class="apply"> <%= submit_tag "Apply" %></p>
+      <% end %>
+<% end %>
+
+
+
+
+
+
+<br/><br/>

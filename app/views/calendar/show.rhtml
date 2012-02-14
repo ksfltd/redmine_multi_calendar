@@ -1,0 +1,50 @@
+<%= render :partial => 'menu/menu_show_calendar', :locals => { :calendar => @calendar} %>
+<div class="contextual">
+
+  
+  
+  <%= link_to l(:mc_copy), {:controller => 'calendar', :action => 'new', :id_copy_calendar =>@calendar.id}, :class => 'icon icon-duplicate' %>
+  <%= link_to l(:mc_delete), { :controller => "calendar",  :id => @calendar.id,  :action => "destroy"},  :confirm => l(:mc_delete_this_calendar), :title => l(:mc_destroy), :class => 'icon icon-delete' %>
+  
+</div>
+<h2><%=l(:mc_overview)%></h2>
+<br/><br/>
+
+<div class="splitcontentleft">
+    <div class="issues box">
+        <h3><%=l(:mc_holidays)%></h3>
+        <ul>
+          <% if @list_holidays.empty? %>
+              <%=l(:mc_holidays_is_not_found)%>
+          <% end %>
+
+            <% @list_holidays.sort.map do |key, value| %>
+                <li>
+                    <%= link_to "#{key} year", {:controller => 'calendar', :action => 'settings', :id =>@calendar.id, :date_year_for_list_holidays => key, :tab => 'calendar_view'}, :method => :post %><br/>
+                    <% value.sort_by(&:date_holiday).each do |holiday| %>
+                      <%= holiday.date_holiday.strftime('%m/%d')  %> - <%= holiday.holiday  %>
+                      
+                      <br/>
+                    <% end %>
+                </li>
+             <% end %>
+         </ul>
+    </div>
+</div>
+
+<div class="splitcontentright">
+        
+        
+        <% if @users_assign_calendar.any? %>
+            <div class="members box">
+                    <h3><%=l(:label_member_plural)%></h3>
+                    
+                    <%= @users_assign_calendar.sort.collect{|u| link_to_user u}.join(", ") %><br />
+                    
+            </div>
+	<% end %>
+    
+</div>
+
+
+

@@ -1,0 +1,12 @@
+<% if  session[:error_multi_calendar] && !session[:error_multi_calendar].empty? %>
+    <div id="errorExplanation" class="errorExplanation">
+        <h2></h2><p></p><ul>
+        <% session[:error_multi_calendar].each do | error| %>
+            <li><%= error %></li>
+        <% end %>
+        </ul>
+    </div>
+
+<br/>
+<% session[:error_multi_calendar] = nil %>
+<% end %>

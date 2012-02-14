@@ -1,0 +1,11 @@
+<script>
+  jQuery(document).ready(function(){
+    <% if !@copy_calendar %>
+          jQuery("<div id='main-menu'><ul><li>" + ' <%= link_to l(:mc_new_calendar), {:controller => 'calendar', :action => "new"}, :class => "new_calendar selected" %>' + "</li></ul></div>").appendTo("#header");
+          <% else %>
+            jQuery("<div id='main-menu'><ul><li>" + ' <%= link_to l(:mc_new_calendar), {:controller => 'calendar', :action => 'new', :id_copy_calendar =>@copy_calendar.id}, :class => "new_calendar selected" %>' + "</li></ul></div>").appendTo("#header");
+    <% end %>
+   });
+
+
+</script>

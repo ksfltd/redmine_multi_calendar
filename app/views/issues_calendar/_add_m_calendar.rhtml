@@ -1,0 +1,8 @@
+<p>
+  <label><%=l(:mc_display_calendar)%></label>
+  <% if User.current.assign_calendar %>
+    <%= select_tag 'm_calendar', options_for_select({User.current.assign_calendar.calendar.name => true, 'All calendars' => false}, User.current.assign_calendar.one_calendar) %>
+  <% else %>
+    <%= select_tag 'm_calendar', options_for_select({'All calendars' => false}) %>
+  <% end %>
+</p>

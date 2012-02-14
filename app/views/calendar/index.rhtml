@@ -1,0 +1,13 @@
+<div class="contextual">
+<%= link_to l(:mc_new_calendar), {:action => 'new'}, :class => 'icon icon-add' %>
+</div>
+<h2><%=l(:mc_calendars)%></h2>
+
+
+<br/>
+<div class="list_calendar" type="circle">
+
+     <% @calendars.each do |calendar| %>        
+           <p><%= link_to calendar.name, :controller => 'calendar', :action => 'show', :id =>calendar.id %></p>
+     <% end %>
+</div>

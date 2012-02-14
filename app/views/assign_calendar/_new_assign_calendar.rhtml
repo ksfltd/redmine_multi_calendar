@@ -1,0 +1,44 @@
+<% calendars = Calendar.all %>
+<% if @user.assign_calendar %>
+<div class="splitcontentleft">
+
+<table class="list memberships">
+	<thead><tr>
+	  <th><%=l(:mc_calendar2)%></th>
+	  <th></th>      
+	</tr></thead>
+	<tbody>
+            <tr id="member-<%= @user.assign_calendar.id %>" class="<%= cycle 'odd', 'even' %> class">
+                <td class="project">
+                  <%=  @user.assign_calendar.calendar.name %>
+                </td>
+                <td class="buttons">
+                    <%= link_to_remote(l(:button_delete), { :url => { :controller => 'assign_calendar', :action => 'destroy_calendar', :id => @user }, :method => :post, :confirm =>  "Are you sure you want to delete it?" }, :class => 'icon icon-del')  %>
+                </td>
+            </tr>
+	</tbody>
+
+</table>
+
+</div>
+
+<% else %>
+
+<div class="splitcontentleft">
+    <p class="nodata"><%= l(:label_no_data) %></p>
+</div>
+
+
+<div class="splitcontentright">
+<% if calendars.any? %>
+<fieldset><legend><%=l(:mc_new_calendar)%></legend>
+<% remote_form_for(:calendar, :url => { :controller => 'assign_calendar', :action => 'add_calendar', :id => @user }) do %>
+<%= select_tag 'calendars[calendar_id]', options_for_calendar_select( calendars) %>
+
+<p><%= submit_tag l(:button_add) %></p>
+<% end %>
+</fieldset>
+<% end %>
+</div>
+
+<% end %>
