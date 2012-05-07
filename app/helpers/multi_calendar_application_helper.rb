@@ -87,7 +87,7 @@ module MultiCalendarApplicationHelper
            e << "<div style='width:100%; clear:both;'>"
            t = true
            v.calendar.assign_calendars.each do |a|
-             if project.users.include?(a.user)
+             if (!project.blank? && project.users.include?(a.user))
                 if t
                    e << "<div style='width:50%; float: left;'>"
                     t = false
