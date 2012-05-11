@@ -16,24 +16,44 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
 
-class CreatePatternWeeklies < ActiveRecord::Migration
-  def self.up
-    create_table :pattern_weeklies do |t|
-      t.column :name, :string
+require_dependency 'users_controller'
+module UsersControllerPatch
+  def self.included(base) # :nodoc:
+    base.extend(ClassMethods)
 
-      t.column :color, :string
+    base.send(:include, InstanceMethods)
 
-      t.column :calendar_id, :integer
-
-      t.column :duration, :float, :default => 0
-
-      t.column :deft, :boolean, :default => false
-
-    #  t.column :show_default, :boolean, :default => false
+    # Same as typing in the class
+    base.class_eval do
+      unloadable # Send unloadable so it will not be unloaded in development
+      alias_method_chain :update, :m_calendar
     end
+
   end
 
-  def self.down
-    drop_table :pattern_weeklies
+  module ClassMethods
+
+  end
+
+  module InstanceMethods
+    def update_with_m_calendar
+      # account_without_m_calendar
+
+
+       begin
+         
+           if @user.assign_calendar && params[:m_calendar]
+             @user.assign_calendar.one_calendar = params[:m_calendar]
+             
+             @user.assign_calendar.save
+             
+           end
+        rescue => err
+         puts err
+         
+       end
+
+       update_without_m_calendar
+    end
   end
 end

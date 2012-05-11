@@ -50,7 +50,9 @@ Dispatcher.to_prepare :redmine_multi_calendar do
     MyController.send(:include, MyControllerPatch)
   end
 
-
+  unless UsersController.included_modules.include? UsersControllerPatch
+    UsersController.send(:include, UsersControllerPatch)
+  end
 
 
 end

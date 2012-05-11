@@ -1,5 +1,6 @@
 <% vacations = vacations_for_users(@one_calendar) %>
-<% e = vacations_for_page_issues_calendar(vacations) %>
+<% e = vacations_for_page_issues_calendar(vacations, @project) %>
+<% e_color = find_color_w_d(@one_calendar, @project) %>
 
 
 <table class="cal">
@@ -11,7 +12,7 @@
 <% day = calendar.startdt
 while day <= calendar.enddt %>
 <%= "<td class='week-number' title='#{ l(:label_week) }'>#{(day+(11-day.cwday)%7).cweek}</td>" if day.cwday == calendar.first_wday %>
-<td class="<%= day.month==calendar.month ? 'even' : 'odd' %><%= ' today' if Date.today == day %><%= ' vacations' if e.include?(day) %>">
+<td class="<%= day.month==calendar.month ? 'even' : 'odd' %><%= ' today' if Date.today == day %><%= ' vacations' if e.include?(day) %>" style="<%= "background-color: #{e_color[day.wday]};" if e_color[day.wday] && Date.today != day %>">
 <p class="day-num"><%= day.day %></p>
 <%= vacations_events_on(day, vacations, @project) %>
 <% calendar.events_on(day).each do |i| %>

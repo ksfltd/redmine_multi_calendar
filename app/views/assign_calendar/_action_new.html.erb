@@ -19,8 +19,7 @@
                 <%= link_to_remote(l(:button_delete), { :url => {:controller => 'assign_calendar', :action => 'destroy', :user_id => u.id, :calendar_id => @calendar.id},
                                                         :method => :post,
                                                         :confirm =>  "Are you sure you want to delete it?"
-                                                      }, :title => l(:button_delete),
-                                                         :class => 'icon icon-del') %>
+                                                      }, :class => 'icon icon-del') %>
             </td>
 	</tr>
       <% end%>

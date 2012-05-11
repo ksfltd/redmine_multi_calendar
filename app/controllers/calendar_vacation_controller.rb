@@ -45,7 +45,7 @@ class CalendarVacationController < ApplicationController
 
 
   end
-
+=begin
   def list_holidays
     @holidays = []
     if params[:date]
@@ -62,7 +62,7 @@ class CalendarVacationController < ApplicationController
     end
 
   end
-
+=end
 
   def create
     if @calendar

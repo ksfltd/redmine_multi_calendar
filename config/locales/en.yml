@@ -64,7 +64,9 @@ en:
   mc_duration: "Duration "
   mc_color_is_invalid: "Color is invalid"
   mc_hours: "hours"
+  mc_type: "Type"
   mc_delete2: "Delete"
   mc_new_day_type: "New day type"
   mc_day2: "Day"
-  mc_type: "Type"
+  mc_add_or_edit_holiday: "Click on a day to add or edit holiday"
+  mc_default_value: Default value

@@ -1,3 +1,4 @@
+body {min-width:1280px;}
 
 .list_calendar a{
   color: #2A5685;
@@ -51,6 +52,13 @@ div#tab-content-day_type .splitcontentright { width: 34% }
 .icon-delete3{
     margin-left: 5px;
     background-image: url(../images/delete3.png);
+    width:10px;
+
+   /* display:block;
+    height:16px;*/
+   /* width:16px;
+    float:right;
+    margin:2px 10px 0 5px;*/
 }
 
 .icon-delete2{
@@ -99,8 +107,13 @@ div#tab-content-day_type .splitcontentright { width: 34% }
 .submit_button2_m{
   width:383px;}
 
-.submit_button_m input, .submit_button2_m input{ width:65px;}
+.submit_button_m input, .submit_button2_m input{ 
+   /* width:65px;*/
+}
 
-.error_date{
+.error_date, .error_valid{
     border:2px solid red;
+}
+#all_event .valid{
+    width: 225px
 }

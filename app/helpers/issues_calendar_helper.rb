@@ -32,7 +32,14 @@ module IssuesCalendarHelper
   end
 
 
-  def vacations_for_page_issues_calendar(vacations)
+  def vacations_for_page_issues_calendar(vacations, project)
+    if project
+      calendars = []
+      project.users.each do |user|
+        calendars << user.assign_calendar.calendar.id if user.assign_calendar
+      end
+      vacations = vacations.find_all{ |elem| calendars.include?(elem.calendar_id) }
+    end
    e = []
      vacations.each do |event|
         e << event.date_holiday
@@ -45,18 +52,44 @@ module IssuesCalendarHelper
    return  e
   end
 
+  def my_page_vacations(day, vacations)
+
+    e = ""
+   vacations_day = vacations.find_all{ |elem| User.current.assign_calendar && elem.date_holiday == day && elem.calendar_id == User.current.assign_calendar.calendar_id }
+   vacations_day_f = vacations.find_all{ |elem| User.current.assign_calendar && elem.calendar_id == User.current.assign_calendar.calendar_id && elem.fixed_date == 1 && elem.date_holiday.year < day.year && Date.new(day.year, elem.date_holiday.month, elem.date_holiday.day ) == day }
+
+     vacations_day = vacations_day + vacations_day_f
+     if vacations_day
+       vacations_day.each do |v|
+         e << "<div class='vacations tooltip' style='background: #{v.pattern_weekly.color};'>"
+         duration = v.pattern_weekly.duration > 0 ? "(#{v.pattern_weekly.duration}hrs)" : ""
+           e << "<p>#{v.pattern_weekly.name} #{duration}</p><p class='m_label'>#{v.holiday}</p>"
+           e << "<span class='tip'>"
+           e << "<p class='m_label'>#{l(:mc_calendar)}: #{v.calendar.name}</p>"
+           e << "</span>"
+           e << "</div>"
+       end
+     end
+     return  e
+  end
   
   def vacations_events_on(day, vacations, project)
-
+return my_page_vacations(day, vacations) if !project
    e = ""
 
    vacations_day = vacations.find_all{ |elem| elem.date_holiday == day } #.find_all_by_date_holiday(day)
    vacations_day_f = vacations.find_all{ |elem| elem.fixed_date == 1 && elem.date_holiday.year < day.year && Date.new(day.year, elem.date_holiday.month, elem.date_holiday.day ) == day }
    vacations_day = vacations_day + vacations_day_f
+   calendars = []
+    project.users.each do |user|
+      calendars << user.assign_calendar.calendar.id if user.assign_calendar
+    end
+    vacations_day = vacations_day.find_all{ |elem| calendars.include?(elem.calendar_id) }
      if vacations_day
        vacations_day.each do |v|
-           e << "<div class='vacations tooltip'>"
-           e << "<p>#{l(:mc_holiday2)}</p><p class='m_label'>#{v.holiday}</p>"
+           e << "<div class='vacations tooltip' style='background: #{v.pattern_weekly.color};'>"
+           duration = v.pattern_weekly.duration > 0 ? "(#{v.pattern_weekly.duration}hrs)" : ""
+           e << "<p>#{v.pattern_weekly.name}  #{duration}</p><p class='m_label'>#{v.holiday}</p>"
            e << "<span class='tip'>"
            e << "<p class='m_label'>#{l(:mc_calendar)}: #{v.calendar.name}</p>"
 
@@ -134,5 +167,36 @@ module IssuesCalendarHelper
     link_to_content_update(link_name, params.merge(:year => year, :month => month, :m_calendar => m_calendar.to_s))
   end
   
+
+ def find_color_w_d(calendar, project)
+   pattern_weekly_name = "weekend"
+    e = {}
+    if calendar.to_s != "false"
+
+      wd = WeekDay.find_all_by_calendar_id(calendar)
+      wd.each do |event|
+        e[event.dayname] = event.pattern_weekly.color if event.pattern_weekly && event.pattern_weekly.name.strip.downcase == pattern_weekly_name && event.pattern_weekly.deft
+      end
+    else
+
+      if User.current && User.current.assign_calendar && User.current.assign_calendar.calendar_id
+        wd = WeekDay.find_all_by_calendar_id(User.current.assign_calendar.calendar_id)
+        wd.each do |event|
+          e[event.dayname] = event.pattern_weekly.color if event.pattern_weekly && event.pattern_weekly.name.strip.downcase == pattern_weekly_name && event.pattern_weekly.deft
+        end
+
+        project.users.each do |user|
+          wd = WeekDay.find_all_by_calendar_id(user.assign_calendar.calendar.id) if user.assign_calendar && User.current.id != user.id
+          wd.each do |event|
+           # e[event.dayname] = event.pattern_weekly.color if event.pattern_weekly && event.pattern_weekly.id == 4 && !e.include?(event.dayname)  && event.pattern_weekly.deft
+           # e[event.dayname] = "#FFE4E1" if event.pattern_weekly && event.pattern_weekly.id == 4 && !e.include?(event.dayname)  && event.pattern_weekly.deft
+            e[event.dayname] = "#FFE4E1" if event.pattern_weekly && event.pattern_weekly.name.strip.downcase == pattern_weekly_name && !e.include?(event.dayname)  && event.pattern_weekly.deft
+          end
+        end
+      end
+    end
+   return  e
+  end
+
 
 end

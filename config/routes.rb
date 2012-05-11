@@ -17,12 +17,18 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
 
 ActionController::Routing::Routes.draw do |map|
+  map.connect 'calendars/:id/settings', :controller => 'calendar', :action => 'settings'
+  map.connect 'calendars/:id/settings/:tab', :controller => 'calendar', :action => 'settings'
+
+ # map.connect 'calendar/:id/show', :controller => 'calendar_vacation', :action => 'show'
   map.connect 'calendars/:id/view', :controller => 'calendar_vacation', :action => 'show'
-  map.connect 'calendars/:id/holidays', :controller => 'calendar_vacation', :action => 'list_holidays'
+  #map.connect 'calendars/:id/holidays', :controller => 'calendar_vacation', :action => 'list_holidays'
   map.connect 'calendars/:id/assign_calendar', :controller => 'assign_calendar', :action => 'new'
-  map.connect 'calendars/settings/:tab/:id/:date_year_for_list_holidays', :controller => 'calendar', :action => 'settings'
-  map.connect 'calendars/settings/:tab/:id', :controller => 'calendar', :action => 'settings'
-  map.connect 'calendars/settings/:tab/:id/:year', :controller => 'calendar', :action => 'settings'
+  map.connect 'calendars/:id/settings/:tab/:date_year_for_list_holidays', :controller => 'calendar', :action => 'settings'
+ # map.connect 'calendars/settings/:tab/:id/:date_year_for_list_holidays', :controller => 'calendar', :action => 'settings'
+ # map.connect 'calendars/settings/:tab/:id', :controller => 'calendar', :action => 'settings'
+  map.connect 'calendars/:id/settings/:tab/:year', :controller => 'calendar', :action => 'settings'
+ # map.connect 'calendars/settings/:tab/:id/:year', :controller => 'calendar', :action => 'settings'
 
   map.connect 'issues/calendar', :controller => 'calendars', :action => 'show'
 

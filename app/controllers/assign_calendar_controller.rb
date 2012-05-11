@@ -92,8 +92,16 @@ class AssignCalendarController < ApplicationController
     @user = User.find(params[:id])
      respond_to do |format|
        if a_calendar.valid?
+
+        # format.html { redirect_to :back }
          format.html { redirect_to :controller => 'users', :action => 'edit', :id => params[:id], :tab => 'assign_calendar' }
-         format.js { render(:update) {|page| page.replace_html "tab-content-assign_calendar", :partial => 'assign_calendar/new_assign_calendar'} }
+         format.js { 
+           render(:update) {|page|
+             page.replace_html "tab-content-assign_calendar", :partial => 'assign_calendar/new_assign_calendar'
+             page.replace_html "add_m_c", :partial => 'issues_calendar/add_m_calendar'
+             }
+                     
+           }
        else
          format.js {
            render(:update) {|page|
@@ -115,7 +123,10 @@ class AssignCalendarController < ApplicationController
     @user = User.find(params[:id])
     respond_to do |format|
       format.html { redirect_to :controller => 'users', :action => 'edit', :id => params[:id], :tab => 'assign_calendar' }
-      format.js { render(:update) {|page| page.replace_html "tab-content-assign_calendar", :partial => 'assign_calendar/new_assign_calendar'} }
+      format.js { render(:update) {|page|
+          page.replace_html "tab-content-assign_calendar", :partial => 'assign_calendar/new_assign_calendar'
+          page.replace_html "add_m_c", :partial => 'issues_calendar/add_m_calendar'
+        } }
     end
   end
 

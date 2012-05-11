@@ -2,8 +2,8 @@
 
    function option_hash_for_select() {     
       var optionHash = {};      
-      <% @calendar.pattern_weeklies.each do |i| %>        
-          optionHash['<%= i.id %>'] = '<%= i.name %>';       
+      <% @calendar.pattern_weeklies.sort_by(&:name).each do |i| %>
+          optionHash['<%= i.id %>'] = '<%= i.name %>';
       <% end %>    
       return optionHash;
     }
@@ -32,6 +32,7 @@
    });
 
    function submit_form(f,y) {
+     
      var y_new = parseInt(jQuery("#date_year").val());
      y = parseInt(y);
      if (y == y_new)
@@ -44,7 +45,8 @@
              return false;       
        }
      change_data_m = false;
-     jQuery("#"+f).submit();
+     //jQuery("#"+f).submit();
+     jQuery("#submit_form_show_calendar").click();
          return false;
     }
 
@@ -87,9 +89,11 @@
        tag = tag + "onclick='" + options.onclick + "' ";
        tag = tag + "href='" + url + "' ";
        tag = tag + "class='" + options.class_style + "'";
+       tag = tag + "title='" + options.title + "'";
        tag = tag +  ">";
        tag = tag + body;
        tag = tag + "</a>";
+       
       return tag;
     }
 
@@ -109,6 +113,34 @@
     }
 
 
+    function select_tag_ASort(id, name, aInput, options){
+      //alert(aInput);
+         var aTemp = []; // временный массив
+        for (var sKey in aInput){aTemp.push([sKey, aInput[sKey]]);} // ключ и его значение
+        aTemp = aTemp.sort(function (){return arguments[0][1] > arguments[1][1] ? 1 : -1}); // сортируем временный массив
+       // var aOutput = {}; // это мы вернем
+
+        var tag = " <select id='" + id + "' name='" + name + "'>";
+
+        for (var nIndex = 0; nIndex < aTemp.length; nIndex++) {
+         //   aOutput[aTemp[nIndex][0]] = aTemp[nIndex][1];
+        //  alert( aTemp[nIndex][0] + " == " +aOutput[aTemp[nIndex][0]]);
+          var item = aTemp[nIndex][0]
+          if (options.selected == item){
+             var tag_option = "<option value='"+item+"' selected >"+aTemp[nIndex][1]+"</option>";
+           } else{
+             var tag_option = "<option value='"+item+"'>"+aTemp[nIndex][1]+"</option>";
+           }
+           tag = tag + tag_option;
+
+        }// собственно создаем выходной массив в нужном порядке
+        tag = tag + "</select> ";
+        delete aTemp; // убираем за собой
+        delete aInput; // по идее исходный массив тоже нужно удалить, но далеко не всегда. можно вынести за пределы функции, но не забывать там убирать мусор
+       return tag;
+      // return aOutput;
+    }
+
 
   function e_add(date, select_day_type) {
     if (jQuery("#div_"+date).text()=="")
@@ -117,18 +149,20 @@
             i_holiday = parseInt(jQuery("#i_holiday").attr("value")) + 1;
 
             var option_tags = option_hash_for_select();
-            select_day_type = select_tag("select_brief_days_" + date, "calendar_v" + i_holiday + "[brief_days]", option_tags, {"selected": select_day_type});
-
+           // var option_tags = ASort(option_tags1);
+           //  alert(option_tags);
+          //  select_day_type = select_tag("select_brief_days_" + date, "calendar_v" + i_holiday + "[brief_days]", option_tags, {"selected": select_day_type});
+            select_day_type = select_tag_ASort("select_brief_days_" + date, "calendar_v" + i_holiday + "[brief_days]", option_tags, {"selected": select_day_type});
             var options    = {"size": "", "class_style": ""};
             var tag_hidden = hidden_field_tag("hidden_" + date, "calendar_v_" + i_holiday, date, options);
             var input_d_event =  text_field_tag("d_event_" + date, "calendar_v" + i_holiday + "[date_holiday]", date, {"size": "10", "class_style": "date_h"});
-            var input_input   =  text_field_tag("input_" + date, "calendar_v" + i_holiday + "[holiday]", "", {"size": "50", "class_style": ""});
+            var input_input   =  text_field_tag("input_" + date, "calendar_v" + i_holiday + "[holiday]", "", {"size": "", "class_style": "valid"});
             option_tags = {"1": "Fixed date", "0": "Free date"};
             var select_select = select_tag("select" + date, "calendar_v" + i_holiday + "[fixed_date]", option_tags, {"selected": "1"});
-            var tag_del       = link_to("a_" + date, "&nbsp", "#", {"onclick": "return event_delete(\"" + date + "\");", "class_style": "icon icon-delete3"})
-   
-            var content = "<div id='div_" + date + "' style='width: 690px;'>" + tag_hidden + input_d_event + input_input + select_select + select_day_type + tag_del + " </div>";
-          
+            var tag_del       = link_to("a_" + date, "", "#", {"onclick": "return event_delete(\"" + date + "\");", "class_style": "icon icon-delete3", "title": "Delete from list"})
+  
+            var content = "<div id='div_" + date + "' style='width: 590px;'>" + tag_hidden + input_d_event + input_input + select_select + select_day_type +" "+ tag_del + " </div>";
+      
             jQuery("#all_event").append(content);
             jQuery("#select_brief_days_"+date).attr("name", "calendar_v" + i_holiday + "[brief_days]");
             jQuery("#i_holiday").attr("value", i_holiday);
@@ -149,15 +183,16 @@
     var tag_i_holiday_сurrent = hidden_field_tag("i_holiday_сurrent" + date_holiday, "i_holiday_сurrent" + date_holiday, i_holiday_сurrent, options);
     var tag_hidden  = hidden_field_tag("hidden_" + date, "calendar_v_" + i_holiday_сurrent, date_holiday, options);
     var tag_date    = text_field_tag("d_event_" + date, "calendar_v" + i_holiday_сurrent + "[date_holiday]", date, {"size": "10", "class_style": "date_h"});
-    var tag_holiday = text_field_tag("input_" + date, "calendar_v" + i_holiday_сurrent + "[holiday]", holiday, {"size": "50", "class_style": ""});
-    var tag_del     = link_to("a_" + date, "&nbsp", "#", {"onclick": "return event_destroy_l(\"" + date + "\");", "class_style": "icon icon-delete2"});
+    var tag_holiday = text_field_tag("input_" + date, "calendar_v" + i_holiday_сurrent + "[holiday]", holiday, {"size": "", "class_style": "valid"});
+    var tag_del     = link_to("a_" + date, "", "#", {"onclick": "return event_destroy_l(\"" + date + "\");", "class_style": "icon icon-delete2", "title": "Delete from list"});
+    
     var option_tags = {"1": "Fixed date", "0": "Free date"};
     var tag_fixed_date = select_tag("select_" + date, "calendar_v" + i_holiday_сurrent + "[fixed_date]", option_tags, {"selected": fixed_date});
     option_tags     = option_hash_for_select();
-    var tag_brief_days = select_tag("select_brief_days_" + date, "calendar_v" + i_holiday_сurrent + "[brief_days]", option_tags, {"selected": select_day_type});
+    var tag_brief_days = select_tag_ASort("select_brief_days_" + date, "calendar_v" + i_holiday_сurrent + "[brief_days]", option_tags, {"selected": select_day_type});
 
           jQuery("#div_"+date).empty();
-          jQuery("#div_"+date).append("<span id ='span_" + date + "'>" + tag_date + tag_holiday + tag_fixed_date + tag_brief_days + "</span>" + tag_del + tag_hidden + tag_i_holiday_сurrent);
+          jQuery("#div_"+date).append("<span id ='span_" + date + "'>" + tag_date + tag_holiday + tag_fixed_date + tag_brief_days + "</span>" + " "+ tag_del + tag_hidden + tag_i_holiday_сurrent);
           jQuery("#select_brief_days_"+date).attr("name", "calendar_v" + i_holiday_сurrent + "[brief_days]");
 
 
@@ -178,10 +213,10 @@
      jQuery("#select_"+date).attr("disabled","disabled");
      jQuery("#select_brief_days_"+date).attr("disabled","disabled");
 
-     jQuery("#span_"+date).wrapAll("<s></s>");
+    // jQuery("#span_"+date).wrapAll("<s></s>");
 
      jQuery("#a_"+date).remove();
-     jQuery("#div_"+date).append("<a  id='a_" + date + "' onclick='return event_undo(\"" + date + "\");'  href='#'href='#' class='icon icon-back'> &nbsp</a>");
+     jQuery("#div_"+date).append("<a  id='a_" + date + "' onclick='return event_undo(\"" + date + "\");'  href='#'href='#' title='Return record in list' class='icon icon-back'></a>");
 
      var name = "del_" + jQuery("#hidden_"+date).attr("name");
      jQuery("#hidden_"+date).attr("name", name);
@@ -194,10 +229,12 @@
      jQuery("#input_"+date).removeAttr("disabled");
      jQuery("#select_"+date).removeAttr("disabled");
      jQuery("#select_brief_days_"+date).removeAttr("disabled");
-     jQuery("#span_"+date).unwrap();
+     ///??jQuery("#span_"+date).unwrap();
      jQuery("#a_"+date).remove();
-   //  jQuery("#div_"+date).append("<a  id='a_" + date + "' onclick='return event_destroy_l(\"" + date + "\");'  href='#'><div style='margin-top: 5px; height:16px; width: 16px; float:right;'><img border='0' src='/images/../plugin_assets/redmine_multi_calendar/images/delete_calendar.png' alt='delete'/></div></a>");
-     jQuery("#div_"+date).append("<a  id='a_" + date + "' onclick='return event_destroy_l(\"" + date + "\");'  href='#' class='icon icon-delete2'>&nbsp</a>");
+   
+     jQuery("#div_"+date).append("<a  id='a_" + date + "' onclick='return event_destroy_l(\"" + date + "\");' title='Delete from list' href='#' class='icon icon-delete2'></a>");
+     //jQuery("#div_"+date).append(tag_del);
+  //   jQuery("#div_"+date).append( " "+ tag_del);
 
      var name = jQuery("#hidden_"+date).attr("name");
      var reg=/del_/
@@ -212,6 +249,20 @@
 
 
    function form_valid() {
+
+     jQuery(".valid").each(
+             function(i) {               
+               jQuery(this).removeClass('error_valid');
+               if (this.value==""){
+                 jQuery(this).addClass('error_valid');
+               }
+             }
+        );
+        if (jQuery(".error_valid").length!=0){
+           alert("Field can not be empty");
+          return false;
+         }
+
     // var re = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/;
      var re = /^[0-9]{4}-[0-2]?[0-9]{1}-([0-2]?[0-9]{1}|3[0-1])$/;
      
@@ -237,19 +288,19 @@
 <div class="splitcontentleft">
 <% i_holiday = 0 %>
 <% form_tag(  {:controller => "calendar_vacation", :action => "create", :id => @calendar.id}, :onsubmit => "return form_valid();") do %>
-  <div class="apply" style='width: 690px;  clear:both;'>
+  <div class="apply" style='width: 590px;  clear:both;'>
     <div style="width:90px; float: left;" class="m_label"><%=l(:mc_date)%> </div>
-    <div style="width:330px; float: left;" class="m_label"><%=l(:mc_holiday3)%></div>
+    <div style="width:225px; float: left;" class="m_label"><%=l(:mc_holiday3)%></div>
     <div style="width:90px; float: left;" class="m_label"><%=l(:mc_fixed_date)%></div>
     <div style="width:100px; float: left;" class="m_label"><%=l(:mc_day)%></div>
   </div>
-  <div id="all_event">    
+  <div id="all_event" style='width: 590px;  clear:both;'>
         <% @holidays.sort_by(&:date_holiday).each do |calendar| %>
             <% i_holiday = i_holiday + 1 %>
-          <div id='div_<%= calendar.date_holiday %>'  style='width: 690px;'>
+          <div id='div_<%= calendar.date_holiday %>'  style='width: 590px;'>
             <span id ="span_<%= calendar.date_holiday %>">
                 <input id='d_event_<%= calendar.date_holiday %>' name='calendar_v<%= i_holiday %>[date_holiday]' class="change_data_m date_h" type='text' value='<%= calendar.date_holiday %>' size='10'  required />
-                <input id='input_<%= calendar.date_holiday %>' name='calendar_v<%= i_holiday %>[holiday]' class="change_data_m" type='text' value='<%= calendar.holiday %>' size='50' />
+                <input id='input_<%= calendar.date_holiday %>' name='calendar_v<%= i_holiday %>[holiday]' class="change_data_m valid" type='text' value='<%= calendar.holiday %>' size='' />
 
                 <% if calendar.fixed_date == 0 %>
                     <select id='select_<%= calendar.date_holiday %>' class="change_data_m" name='calendar_v<%= i_holiday %>[fixed_date]'> <option value='1'>Fixed date</option><option value='0' selected >Free date</option> </select>
@@ -261,7 +312,7 @@
             </span>
 
             <input type='hidden' id='hidden_<%= calendar.date_holiday %>' name='calendar_v_<%= i_holiday %>' value='<%= calendar.date_holiday %>' />
-            <a id='a_<%= calendar.date_holiday %>' onclick="return event_destroy_l('<%= calendar.date_holiday %>')" href='#'  class="icon icon-delete2">&nbsp </a>
+            <a id='a_<%= calendar.date_holiday %>' title="Delete from list" onclick="return event_destroy_l('<%= calendar.date_holiday %>')" href='#'  class="icon icon-delete2"></a>
             <input type="hidden" name="i_holiday_сurrent<%= calendar.date_holiday %>" id="i_holiday_сurrent<%= calendar.date_holiday %>" value="<%= i_holiday %>" />
            </div>
          <% end %>
@@ -278,7 +329,7 @@
              <% form_remote_tag  :url => {:controller => :calendar_vacation, :action => :show, :id => @calendar.id}, :html => {:id => "show_calendar"} do %>
 
               <%=l(:mc_display_year)%>: <%= select_year(@year, :start_year => Date.today.year-5, :end_year => Date.today.year+5) %>
-              
+              <input type="submit" value="Submit" id="submit_form_show_calendar" name="submit_form_show_calendar" style="display:none;" />
               <% end %>
 
               <% form_tag (  {:controller => :calendar_vacation, :action => "duplicate", :id => @calendar.id }) do %>
@@ -294,6 +345,7 @@
               <br/>
               <a id='a_submit_show_calendar' class="icon icon-checked" onclick="return submit_form('show_calendar', '<%= @year %>');" href='#'>Apply</a>
 <br/><br/>
+<span class="m_label"><%=  l(:mc_add_or_edit_holiday)%></span>
               <div style="overflow: auto; height: 500px; width: 700px;" id="controller">
                   <%= render :partial => 'calendar_vacation/calendar', :locals => { :calendar_h => @calendar, :year => @year} %>
               </div>

@@ -43,7 +43,7 @@ module CalendarHelper
       calendar.pattern_weeklies.each do |i|
         op[i.name] = i.id
       end
-      opt = options_for_select(op, day.pattern_weekly_id)
+      opt = options_for_select(op.sort, day.pattern_weekly_id)
       tag = select_tag "day_type#{day.id}", opt
       tag
   end

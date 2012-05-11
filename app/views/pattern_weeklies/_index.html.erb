@@ -34,16 +34,19 @@
                   <thead>
                     <tr>
                       <th class="checkbox hide-when-print">Name</th>
+                      <th><%= l(:mc_default_value)%></th>
                       <th><%= l(:mc_color)%></th>
                       <th><%= l(:mc_duration)%></th>
+                      
                       <th></th>
                       </tr>
                   </thead>
                       <tbody>
-                   <% @calendar.pattern_weeklies.sort_by(&:id).each do |day| %>
+                   <% @calendar.pattern_weeklies.sort_by(&:name).each do |day| %>
 
-                      <tr id="issue-21" class="hascontextmenu odd issue status-1 priority-2">
+                      <tr id="issue-21"  class=" hascontextmenu issue status-1 priority-2 <%= cycle('odd', 'even') %>">
                         <td class="subject"><span id="member-<%= day.id %>-edit-name"><%= day.name %></span></td>
+                        <td class="tracker"><span id="member-<%= day.id %>-edit-default_value"><%= checked_image day.show_default %></span></td>
                         <td class="tracker"><span id="member-<%= day.id %>-edit-color">
                             <div style="background: <%= day.color %>; color: <%= day.color %>; width: 100px; margin-left: 35%;">1</div>
                           </span></td>
@@ -58,7 +61,7 @@
 
                               <%= render :partial => 'pattern_weeklies/form', :locals => { :f => f, :id_day => "day_color#{day.id}"} %>
                               <div class="submit_button2_m"><%= submit_tag l(:button_change) %>
-                              <%= link_to_function l(:button_cancel), "$('member-#{day.id}-edit-name').show(); $('member-#{day.id}-edit-color').show(); $('member-#{day.id}-edit-duration').show(); $('member-#{day.id}-edit-form').hide(); return false;" %>
+                              <%= link_to_function l(:button_cancel), "$('member-#{day.id}-edit-name').show(); $('member-#{day.id}-edit-color').show(); $('member-#{day.id}-edit-duration').show(); $('member-#{day.id}-edit-default_value').show(); $('member-#{day.id}-edit-form').hide(); return false;" %>
                               </div>
                           <% end %>
 
@@ -69,10 +72,10 @@
                         </td>
                         <td class="buttons">
 
-                          <%= link_to_function l(:button_edit), "$('member-#{day.id}-edit-name').hide(); $('member-#{day.id}-edit-color').hide(); $('member-#{day.id}-edit-duration').hide(); $('member-#{day.id}-edit-form').show(); return false;", :class => 'icon icon-edit' %>
+                          <%= link_to_function l(:button_edit), "$('member-#{day.id}-edit-name').hide(); $('member-#{day.id}-edit-color').hide(); $('member-#{day.id}-edit-duration').hide(); $('member-#{day.id}-edit-default_value').hide(); $('member-#{day.id}-edit-form').show(); return false;", :class => 'icon icon-edit' %>
                           <% if !day.deft && day.week_days.empty? && day.calendar_vacations.empty? %>
                             
-                              <%= link_to l(:mc_delete2), { :controller => "pattern_weeklies",  :id => day.id, :calendar_id => @calendar.id,  :action => "destroy"}, :method => :delete,  :confirm => "Are you sure you want to delete it?", :title => l(:button_delete), :class => 'icon icon-delete' %>
+                              <%= link_to l(:mc_delete2), { :controller => "pattern_weeklies",  :id => day.id, :calendar_id => @calendar.id,  :action => "destroy"}, :method => :delete,  :confirm => "Are you sure you want to delete it?", :class => 'icon icon-delete' %>
                             
                           <% end %>
                         </td>

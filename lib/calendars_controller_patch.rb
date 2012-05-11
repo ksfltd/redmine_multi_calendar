@@ -38,11 +38,14 @@ module CalendarsControllerPatch
   module InstanceMethods
     def show_with_m_calendar_show
      # show_without_m_calendar_show
-      
+      puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+      puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+      puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
            begin        
            @one_calendar = false           
            @one_calendar = User.current.assign_calendar.calendar_id  if params[:m_calendar] == nil && User.current.assign_calendar && User.current.assign_calendar.one_calendar
-           @one_calendar = params[:m_calendar] if params[:m_calendar] != nil && params[:m_calendar] != false           
+           @one_calendar = params[:m_calendar] if params[:m_calendar] != nil && params[:m_calendar] != false
+           
            rescue => err
              puts err
              

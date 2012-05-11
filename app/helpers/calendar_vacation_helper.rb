@@ -97,7 +97,7 @@ module CalendarVacationHelper
           event = events.event_for_date(calendar_id, cur)
           
           select_day_types = event.first.pattern_weekly_id
-          cell_text = "<a href='#' onclick='return e_edit(\"#{event.first.holiday}\",\"#{cur}\",\"#{event.first.fixed_date}\",\"#{select_day_types}\");'> #{cur.mday}</a>"
+          cell_text = "<a href='#' title='#{event.first.holiday}' onclick='return e_edit(\"#{event.first.holiday}\",\"#{cur}\",\"#{event.first.fixed_date}\",\"#{select_day_types}\");'> #{cur.mday}</a>"
         end
 
 
@@ -110,7 +110,7 @@ module CalendarVacationHelper
           event = events_fixed_date.find_all{ |elem| elem.date_holiday.to_formatted_s(:short)==cur.to_formatted_s(:short) } #event_for_date(calendar_id, cur)
           
           select_day_types = event.first.pattern_weekly_id
-          cell_text = "<a href='#' onclick='return e_edit(\"#{event.first.holiday}\",\"#{event.first.date_holiday}\",\"#{event.first.fixed_date}\",\"#{select_day_types}\");'> #{cur.mday}</a>"
+          cell_text = "<a href='#' title='#{event.first.holiday}' onclick='return e_edit(\"#{event.first.holiday}\",\"#{event.first.date_holiday}\",\"#{event.first.fixed_date}\",\"#{select_day_types}\");'> #{cur.mday}</a>"
         end
 
         cell_attrs = { :class => 'specialDay', :style => "background-color: #{event.first.pattern_weekly.color};"} if event.first.pattern_weekly
@@ -119,11 +119,12 @@ module CalendarVacationHelper
 
     
 
-    id_holiday = PatternWeekly.type(options[:calendar],"Holiday").first
-    id_holiday = id_holiday.id if id_holiday
+    #id_holiday = PatternWeekly.type(options[:calendar],"Holiday").first
+    #id_holiday = id_holiday.id if id_holiday
       
-      select_day_types = id_holiday
-      cell_text  ||= "<a href='#' onclick='return e_add(\"#{cur}\", \"#{select_day_types}\");'> #{cur.mday}</a>" # cur.mday "<a href='#' onclick='return click_me();'>" + cur.mday.to_s + "</a>"
+      #select_day_types = id_holiday
+      select_day_types = PatternWeekly.get_id_type_show_default(options[:calendar])
+      cell_text  ||= "<a href='#' title='Add new holiday' onclick='return e_add(\"#{cur}\", \"#{select_day_types}\");'> #{cur.mday}</a>" # cur.mday "<a href='#' onclick='return click_me();'>" + cur.mday.to_s + "</a>"
       cell_attrs ||= {:class => options[:day_class], :style => "background-color: #{wd[cur.wday].color};"}
 
       cell_attrs[:class] += " weekendDay" if [0, 6].include?(cur.wday) && !cell_attrs[:class].index("specialDay")
